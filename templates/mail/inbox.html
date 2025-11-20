@@ -1,0 +1,43 @@
+{% extends "home.html" %}
+{% block content %}
+
+<div class="main">
+    <h2>Inbox</h2>
+
+    {% for email in emails %}
+    <div class="email-card {% if not email.read %}unread{% endif %}"
+         onclick="markRead({{ email.id }})">
+
+        <span class="timestamp">{{ email.timestamp|date:"g:i A" }}</span>
+
+        <div class="sender">
+            From: {{ email.sender.email }}
+        </div>
+
+        <div class="subject">
+            {{ email.subject|default:"(No Subject)" }}
+        </div>
+
+        <div class="body">
+            {{ email.body|truncatechars:80 }}
+        </div>
+    </div>
+    {% empty %}
+        <p>No emails found.</p>
+    {% endfor %}
+</div>
+
+<script>
+function markRead(emailId) {
+    fetch("/mail/mark-read/" + emailId + "/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+        }
+    }).then(() => {
+        location.reload();
+    });
+}
+</script>
+
+{% endblock %}

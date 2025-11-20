@@ -1,0 +1,17 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+<div class="sidebar">
+    <a href="{% url 'compose' %}" class="compose-btn">+ Compose</a>
+
+    <h3>Mail</h3>
+    <a href="{% url 'inbox' %}">Inbox</a>
+    <a href="{% url 'sent' %}">Sent</a>
+
+</div>
+
+<div class="main">
+    <h2>Welcome {{ request.user }}</h2>
+    <p>Select a section from the left panel.</p>
+</div>
