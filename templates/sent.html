@@ -1,0 +1,31 @@
+{% extends "home.html" %}
+{% block content %}
+
+<h2>Sent Emails</h2>
+
+{% for email in emails %}
+<a href="{% url 'email_detail' email.id %}" class="email-row-link">
+<div class="email-row">
+    <div class="empty-col"></div> <!-- placeholder for tick/selection -->
+
+    <div class="email-sender">To:
+        {% for r in email.recipients.all %}
+            {{ r.email }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="email-subject">
+        {{ email.subject|default:"(No Subject)" }}
+        <span class="email-body">
+            – {{ email.body|truncatechars:60 }}
+        </span>
+    </div>
+
+    <div class="email-time">{{ email.timestamp|date:"H:i A" }}</div>
+</div>
+
+{% empty %}
+<p>No sent mail found.</p>
+{% endfor %}
+
+{% endblock %}

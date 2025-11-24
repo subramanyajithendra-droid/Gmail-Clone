@@ -1,0 +1,38 @@
+{% extends "home.html" %}
+{% block content %}
+
+<h2>Inbox</h2>
+
+{% for mail in emails %}
+<a href="{% url 'email_detail' mail.id %}" class="email-row-link">
+<div class="email-row">
+
+    <!-- Green tick if read -->
+    {% if mail.read %}
+        <div class="read-tick">✔</div>
+    {% else %}
+
+
+        <div></div>   <!-- empty placeholder for alignment -->
+    {% endif %}
+
+    <div class="email-sender">{{ mail.sender }}</div>
+    <div class="email-subject">
+        {{ mail.subject }} –
+        <span class="email-body">
+            {{ mail.body|truncatechars:60 }}
+        </span>
+    </div>
+    <div class="email-time">{{ mail.timestamp|date:"H:i A" }}</div>
+
+</div>
+</a>
+{% empty %}
+<p>No sent mail found.</p>
+{% endfor %}
+{% endblock %}
+
+<script>
+
+</script>
+

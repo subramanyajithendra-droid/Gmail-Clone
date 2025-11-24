@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 
@@ -94,7 +94,7 @@ def compose(request):
         messages.success(request, "Email sent successfully")
         return redirect("sent")
 
-    return render(request, "mail/compose.html")
+    return render(request, "compose.html")
 
 
 @login_required
@@ -105,8 +105,9 @@ def inbox(request):
         draft=False,
         archived=False
     ).order_by("-timestamp")
+    print(emails)
 
-    return render(request, "mail/inbox.html", {"emails": emails})
+    return render(request, "inbox.html", {"emails": emails})
 
 
 @login_required
@@ -117,7 +118,7 @@ def sent(request):
         trash=False
     ).order_by("-timestamp")
 
-    return render(request, "mail/sent.html", {"emails": emails})
+    return render(request, "sent.html", {"emails": emails})
 
 
 @login_required
@@ -139,3 +140,15 @@ def toggle_read(request, email_id):
         email.save()
 
     return redirect("inbox")
+
+
+@login_required
+def email_detail(request, email_id):
+    email = get_object_or_404(Email, id=email_id)
+
+    # Mark email as read automatically
+    if not email.read:
+        email.read = True
+        email.save()
+
+    return render(request, "email_detail.html", {"email": email})

@@ -1,17 +1,382 @@
+<!DOCTYPE html>
 {% load static %}
+<html>
+<head>
+    <style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    display: flex;
+}
 
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
+/* Top header */
+.top-header {
+    position: fixed;
+    top: 0;
+    left: 250px; /* sidebar width */
+    right: 0;
+    height: 60px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Profile container */
+.header-right .profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Profile icon circle */
+.profile-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #d93025;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+/* Email text */
+.profile-email {
+    font-size: 14px;
+    color: #202124;
+    font-weight: 500;
+}
+
+/* Logout button */
+.logout-btn {
+    padding: 6px 12px;
+    background: #1a73e8;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.logout-btn:hover {
+    background: #0c57c7;
+}
+
+/* Adjust main content for top header */
+.main {
+    margin-top: 60px; /* same height as top header */
+}
+
+
+/* ==== SIDEBAR ==== */
+.sidebar {
+    width: 220px;
+    background: #fff;
+    padding: 20px;
+    height: 100vh;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.sidebar h3 {
+    margin-top: 25px;
+    font-size: 18px;
+    color: #333;
+}
+
+.sidebar a {
+    display: block;
+    padding: 10px 5px;
+    color: #444;
+    text-decoration: none;
+    font-size: 16px;
+    margin-top: 8px;
+    border-radius: 5px;
+}
+
+.sidebar a:hover {
+    background: #e6e6e6;
+}
+
+.sidebar a.selected {
+    background: #d93025 !important;
+    color: white !important;
+}
+
+.sidebar-title {
+    display: block;
+    font-size: 8px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+.sidebar-title:hover {
+    color: #d93025; /* Highlight on hover */
+}
+
+
+/* ==== COMPOSE BUTTON ==== */
+.compose-btn {
+    width: 100%;
+    padding: 12px;
+    background: #d93025;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.compose-btn:hover {
+    background: #b12017;
+}
+
+/* ==== MAIN EMAIL LIST AREA ==== */
+.main {
+    flex: 1;
+    padding: 20px;
+}
+
+/* ==== COMPOSE WINDOW ==== */
+.gmail-compose-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 450px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+}
+
+.compose-header {
+    padding: 12px;
+    background: #f1f1f1;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.compose-input {
+    border: none;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    width: 100%;
+    outline: none;
+}
+
+.compose-textarea {
+    width: 100%;
+    height: 180px;
+    border: none;
+    padding: 10px;
+    outline: none;
+    resize: none;
+}
+
+/* ==== SEND BUTTON ==== */
+.compose-footer {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+}
+
+.send-btn {
+    background: #1a73e8;
+    padding: 10px 18px;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.send-btn:hover {
+    background: #0c57c7;
+}
+
+.email-row {
+    display: grid;
+    grid-template-columns: 18px 200px 1fr 100px;  /* placeholder | sender | subject+body | time */
+    align-items: center;
+    background: #fff;
+    padding: 12px 18px;
+    margin: 6px 0;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.email-row:hover {
+    background: #f7fafd;
+}
+
+/* Placeholder column (for read tick or selection) */
+.empty-col {
+    width: 20px;
+}
+
+/* Green tick icon (read) */
+.read-tick {
+    color: #0f9d58;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Sender column */
+.email-sender {
+    font-weight: 600;
+    color: #202124;
+    font-size: 15px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Subject + body preview column */
+.email-subject {
+    color: #444;
+    font-size: 15px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.email-body {
+    color: #5f6368;
+    font-weight: 400;
+}
+
+/* Time column */
+.email-time {
+    text-align: right;
+    color: #5f6368;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.email-row-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+
+    </style>
+</head>
+
+<body>
+
+<!-- TOP HEADER -->
+<div class="top-header">
+    <div class="header-left">
+        <!-- You can put a logo or title here if needed -->
+    </div>
+
+    <div class="header-right">
+        <div class="profile">
+            <div class="profile-icon">{{ request.user.email|default:"user@example.com" }}</div>
+            <span class="profile-email">{{ request.user.email }}</span>
+            <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+        </div>
+    </div>
+</div>
+
 
 <div class="sidebar">
-    <a href="{% url 'compose' %}" class="compose-btn">+ Compose</a>
+    <a href="{% url 'inbox' %}" class="sidebar-title">
+        <h2>Mail</h2>
+    </a>
 
-    <h3>Mail</h3>
-    <a href="{% url 'inbox' %}">Inbox</a>
-    <a href="{% url 'sent' %}">Sent</a>
+    <button class="compose-btn" id="openCompose">✚ Compose</button>
 
+    <a href="{% url 'inbox' %}">📥 Inbox</a>
+    <a href="{% url 'sent' %}">📤 Sent</a>
+    <a href="#">⭐ Starred</a>
+    <a href="#">🗑 Trash</a>
 </div>
 
 <div class="main">
-    <h2>Welcome {{ request.user }}</h2>
-    <p>Select a section from the left panel.</p>
+    {% block content %}
+    {% endblock %}
 </div>
+
+
+<!-- COMPOSE WINDOW -->
+<div class="gmail-compose-box" id="composeBox" style="display:none;">
+    <div class="compose-header">
+        <span>New Message</span>
+        <button class="close-btn" id="closeCompose">✖</button>
+    </div>
+
+    <form method="POST" action="{% url 'compose' %}">
+        {% csrf_token %}
+
+        <input type="text" name="recipients" placeholder="To" class="compose-input" required>
+
+        <input type="text" name="subject" placeholder="Subject" class="compose-input">
+
+        <textarea name="body" class="compose-textarea" placeholder="Message"></textarea>
+
+        <div class="compose-footer">
+            <button type="submit" class="send-btn">Send</button>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    document.getElementById("openCompose").onclick = () =>
+        document.getElementById("composeBox").style.display = "flex";
+
+    document.getElementById("closeCompose").onclick = () =>
+        document.getElementById("composeBox").style.display = "none";
+
+    document.querySelectorAll(".sidebar a").forEach(link => {
+        link.addEventListener("click", function () {
+
+            // Remove previous active highlight
+            document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("selected"));
+
+            // Highlight this clicked item
+            this.classList.add("selected");
+        });
+    });
+
+<!--    function markRead(emailId) {-->
+<!--        fetch("/mail/mark-read/" + emailId + "/", {-->
+<!--            method: "POST",-->
+<!--            headers: {-->
+<!--                "X-CSRFToken": "{{ csrf_token }}"-->
+<!--            }-->
+<!--        }).then(() => {-->
+<!--            location.reload();-->
+<!--        });-->
+<!--    }-->
+
+</script>
+
+</body>
+</html>

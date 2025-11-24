@@ -1,0 +1,66 @@
+{% extends "home.html" %}
+{% block content %}
+
+<div class="email-detail">
+    <!-- Back button -->
+    <button class="back-btn" onclick="window.history.back()">
+        <span class="back-arrow">←</span> Back
+    </button>
+
+    <h2>{{ email.subject|default:"(No Subject)" }}</h2>
+    <p><strong>From:</strong> {{ email.sender }}</p>
+    <p><strong>To:</strong>
+        {% for r in email.recipients.all %}
+            {{ r.email }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+    <p><strong>Time:</strong> {{ email.timestamp|date:"d M Y, H:i A" }}</p>
+    <hr>
+    <div class="email-body-full">
+        {{ email.body|linebreaks }}
+    </div>
+</div>
+
+<style>
+.email-detail {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+/* Back button */
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f1f3f4;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #202124;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.back-btn:hover {
+    background: #e8eaed;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.back-arrow {
+    font-size: 16px;
+}
+
+.email-body-full {
+    margin-top: 15px;
+    white-space: pre-line;
+    line-height: 1.6;
+}
+</style>
+
+{% endblock %}

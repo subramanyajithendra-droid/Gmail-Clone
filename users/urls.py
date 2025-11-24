@@ -13,5 +13,7 @@ urlpatterns = [
     path("sent/", views.sent, name="sent"),
     path("email/<int:email_id>/toggle-read/", views.toggle_read, name="toggle_read"),
     path("mark-read/<int:email_id>/", views.mark_read, name="mark_read"),
+    path("message/<int:email_id>/", views.email_detail, name="email_detail"),
+
 
 ]
